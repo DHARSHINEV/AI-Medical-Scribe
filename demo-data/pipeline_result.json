@@ -1,0 +1,313 @@
+{
+  "audio_file": "demo-data\\Recording_5.m4a",
+  "language": "en",
+  "transcript": "Good morning. How are you feeling today? Good morning, Doctor. I'm not feeling well. I see. What seems to be the problem? I have a headache and a sore throat. How long have you had these symptoms? For about three days. Do you have a fever? Yes, a little. Mostly at night. Okay. Are you taking any medicine right now? Just some painkillers, but they don't help much. I understand. Do you have any allergies? No, I don't. All right. I'll give you some medicine and advice rest. Thank you, Doctor. How many days should I rest? At least three to five days. Drink warm fluids and take the medicine on time.",
+  "segments": [
+    {
+      "start": 0.18,
+      "end": 2.98,
+      "text": "Good morning. How are you feeling today?"
+    },
+    {
+      "start": 2.98,
+      "end": 6.38,
+      "text": "Good morning, Doctor. I'm not feeling well."
+    },
+    {
+      "start": 6.38,
+      "end": 9.38,
+      "text": "I see. What seems to be the problem?"
+    },
+    {
+      "start": 9.38,
+      "end": 11.98,
+      "text": "I have a headache and a sore throat."
+    },
+    {
+      "start": 11.98,
+      "end": 14.38,
+      "text": "How long have you had these symptoms?"
+    },
+    {
+      "start": 14.38,
+      "end": 16.78,
+      "text": "For about three days."
+    },
+    {
+      "start": 16.78,
+      "end": 18.38,
+      "text": "Do you have a fever?"
+    },
+    {
+      "start": 18.38,
+      "end": 20.98,
+      "text": "Yes, a little. Mostly at night."
+    },
+    {
+      "start": 20.98,
+      "end": 24.58,
+      "text": "Okay. Are you taking any medicine right now?"
+    },
+    {
+      "start": 24.58,
+      "end": 27.78,
+      "text": "Just some painkillers, but they don't help much."
+    },
+    {
+      "start": 27.78,
+      "end": 29.18,
+      "text": "I understand."
+    },
+    {
+      "start": 29.58,
+      "end": 31.38,
+      "text": "Do you have any allergies?"
+    },
+    {
+      "start": 31.38,
+      "end": 32.58,
+      "text": "No, I don't."
+    },
+    {
+      "start": 32.58,
+      "end": 36.58,
+      "text": "All right. I'll give you some medicine and advice rest."
+    },
+    {
+      "start": 36.58,
+      "end": 39.98,
+      "text": "Thank you, Doctor. How many days should I rest?"
+    },
+    {
+      "start": 39.98,
+      "end": 42.38,
+      "text": "At least three to five days."
+    },
+    {
+      "start": 42.38,
+      "end": 45.98,
+      "text": "Drink warm fluids and take the medicine on time."
+    }
+  ],
+  "diarized_transcript": "Doctor: Good morning. How are you feeling today?\nPatient: Good morning, Doctor. I'm not feeling well.\nDoctor: I see. What seems to be the problem?\nPatient: I have a headache and a sore throat.\nDoctor: How long have you had these symptoms?\nPatient: For about three days.\nDoctor: Do you have a fever?\nPatient: Yes, a little. Mostly at night.\nDoctor: Okay. Are you taking any medicine right now?\nPatient: Just some painkillers, but they don't help much.\nDoctor: I understand.\nPatient: Do you have any allergies?\nDoctor: No, I don't.\nPatient: All right. I'll give you some medicine and advice rest.\nDoctor: Thank you, Doctor. How many days should I rest?\nPatient: At least three to five days.\nDoctor: Drink warm fluids and take the medicine on time.",
+  "diarized_segments": [
+    {
+      "start": 0.18,
+      "end": 2.98,
+      "speaker": "Doctor",
+      "text": "Good morning. How are you feeling today?"
+    },
+    {
+      "start": 2.98,
+      "end": 6.38,
+      "speaker": "Patient",
+      "text": "Good morning, Doctor. I'm not feeling well."
+    },
+    {
+      "start": 6.38,
+      "end": 9.38,
+      "speaker": "Doctor",
+      "text": "I see. What seems to be the problem?"
+    },
+    {
+      "start": 9.38,
+      "end": 11.98,
+      "speaker": "Patient",
+      "text": "I have a headache and a sore throat."
+    },
+    {
+      "start": 11.98,
+      "end": 14.38,
+      "speaker": "Doctor",
+      "text": "How long have you had these symptoms?"
+    },
+    {
+      "start": 14.38,
+      "end": 16.78,
+      "speaker": "Patient",
+      "text": "For about three days."
+    },
+    {
+      "start": 16.78,
+      "end": 18.38,
+      "speaker": "Doctor",
+      "text": "Do you have a fever?"
+    },
+    {
+      "start": 18.38,
+      "end": 20.98,
+      "speaker": "Patient",
+      "text": "Yes, a little. Mostly at night."
+    },
+    {
+      "start": 20.98,
+      "end": 24.58,
+      "speaker": "Doctor",
+      "text": "Okay. Are you taking any medicine right now?"
+    },
+    {
+      "start": 24.58,
+      "end": 27.78,
+      "speaker": "Patient",
+      "text": "Just some painkillers, but they don't help much."
+    },
+    {
+      "start": 27.78,
+      "end": 29.18,
+      "speaker": "Doctor",
+      "text": "I understand."
+    },
+    {
+      "start": 29.58,
+      "end": 31.38,
+      "speaker": "Patient",
+      "text": "Do you have any allergies?"
+    },
+    {
+      "start": 31.38,
+      "end": 32.58,
+      "speaker": "Doctor",
+      "text": "No, I don't."
+    },
+    {
+      "start": 32.58,
+      "end": 36.58,
+      "speaker": "Patient",
+      "text": "All right. I'll give you some medicine and advice rest."
+    },
+    {
+      "start": 36.58,
+      "end": 39.98,
+      "speaker": "Doctor",
+      "text": "Thank you, Doctor. How many days should I rest?"
+    },
+    {
+      "start": 39.98,
+      "end": 42.38,
+      "speaker": "Patient",
+      "text": "At least three to five days."
+    },
+    {
+      "start": 42.38,
+      "end": 45.98,
+      "speaker": "Doctor",
+      "text": "Drink warm fluids and take the medicine on time."
+    }
+  ],
+  "entities": {
+    "symptoms": [
+      "headache",
+      "sore throat",
+      "fever"
+    ],
+    "diseases": [],
+    "allergies": [],
+    "medications": [
+      "painkillers",
+      "medicine"
+    ],
+    "dosage": [],
+    "duration": [
+      "For about three days"
+    ],
+    "severity": [
+      "little"
+    ],
+    "past_medical_history": [],
+    "family_history": []
+  },
+  "patient_history_context": {
+    "previous_patient_history": {
+      "diseases": [
+        "diabetes",
+        "hypertension"
+      ],
+      "allergies": [
+        "penicillin"
+      ],
+      "medications": [
+        "metformin"
+      ],
+      "past_medical_history": [
+        "diabetes"
+      ]
+    },
+    "family_history": [
+      "heart disease"
+    ],
+    "current_consultation": {
+      "symptoms": [
+        "headache",
+        "sore throat",
+        "fever"
+      ],
+      "diseases": [],
+      "allergies": [],
+      "medications": [
+        "painkillers",
+        "medicine"
+      ],
+      "dosage": [],
+      "duration": [
+        "For about three days"
+      ],
+      "severity": [
+        "little"
+      ]
+    },
+    "relevant_context": {
+      "diseases": [
+        "diabetes",
+        "hypertension"
+      ],
+      "allergies": [
+        "penicillin"
+      ],
+      "medications": [
+        "metformin",
+        "painkillers",
+        "medicine"
+      ],
+      "family_history": [
+        "heart disease"
+      ]
+    }
+  },
+  "soap": {
+    "subjective": "Patient reports headache, sore throat, and fever. Duration reported: For about three days. Reported severity descriptors: little. Current medications mentioned: painkillers and medicine. Relevant previous patient history: Known previous conditions: diabetes and hypertension. Previous medical history: diabetes. Known previous allergies: penicillin. Previously documented medications: metformin. Known family history: heart disease.",
+    "objective": "No objective measurements, vital signs, examination findings, laboratory results, or imaging results were documented in the transcript.",
+    "assessment": "Symptoms documented in the conversation: headache, sore throat, and fever. Previously documented conditions: diabetes and hypertension. No confirmed diagnosis was documented.",
+    "plan": "Explicit plan information: I'll give you some medicine and advice rest. Drink warm fluids and take the medicine on time. Medication mentioned: painkillers and medicine."
+  },
+  "safety": {
+    "alerts": [
+      {
+        "type": "allergy_conflict",
+        "severity": "high",
+        "message": "Stored patient history lists penicillin as an allergy, while the current consultation reports no known allergies.",
+        "requires_review": true
+      },
+      {
+        "type": "historical_condition",
+        "severity": "info",
+        "message": "Previously documented condition: diabetes. Review for relevance to the current consultation.",
+        "requires_review": false
+      },
+      {
+        "type": "historical_condition",
+        "severity": "info",
+        "message": "Previously documented condition: hypertension. Review for relevance to the current consultation.",
+        "requires_review": false
+      }
+    ],
+    "alert_count": 3,
+    "high_priority_alert_count": 1,
+    "review_required": true
+  },
+  "review": {
+    "required": true,
+    "status": "pending",
+    "approved": false,
+    "reason": "One or more safety alerts require clinician review."
+  }
+}

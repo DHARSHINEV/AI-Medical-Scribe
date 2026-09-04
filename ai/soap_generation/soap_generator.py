@@ -1,6 +1,7 @@
+import argparse
 import json
 import re
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 class SOAPGenerator:
@@ -10,7 +11,7 @@ class SOAPGenerator:
     The generator is designed for the MVP and follows strict
     documentation rules:
 
-    - Uses only information present in the transcript/entities.
+    - Uses only information present in the transcript/entities/history.
     - Does not invent diagnoses, medications, dosages, or findings.
     - Preserves allergy negations.
     - Preserves duration and severity information.
@@ -28,6 +29,7 @@ class SOAPGenerator:
     @staticmethod
     def _join(items: List[str]) -> str:
         """Convert a list of strings into readable text."""
+
         cleaned = [
             str(item).strip()
             for item in items
@@ -45,18 +47,6 @@ class SOAPGenerator:
 
         return ", ".join(cleaned[:-1]) + f", and {cleaned[-1]}"
 
-    @staticmethod
-    def _sentence_list(items: List[str]) -> str:
-        """Convert extracted items into sentences."""
-        if not items:
-            return ""
-
-        return ". ".join(
-            str(item).strip().rstrip(".")
-            for item in items
-            if str(item).strip()
-        ) + "."
-
     # ------------------------------------------------------------------
     # Subjective
     # ------------------------------------------------------------------
@@ -65,17 +55,19 @@ class SOAPGenerator:
         self,
         transcript: str,
         entities: Dict[str, List[str]],
+        patient_history_context: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Generate the Subjective section.
 
-        Subjective information includes:
-        - Symptoms
+        Includes:
+        - Current symptoms
         - Duration
         - Severity
-        - Medications mentioned
-        - Allergies
-        - Relevant patient/family history
+        - Current medications
+        - Current allergy information
+        - Previous patient history
+        - Family history
         """
 
         parts = []
@@ -88,39 +80,53 @@ class SOAPGenerator:
         past_history = entities.get("past_medical_history", [])
         family_history = entities.get("family_history", [])
 
-        # Symptoms
+        # --------------------------------------------------------------
+        # Current symptoms
+        # --------------------------------------------------------------
+
         if symptoms:
             parts.append(
                 f"Patient reports {self._join(symptoms)}."
             )
 
+        # --------------------------------------------------------------
         # Duration
+        # --------------------------------------------------------------
+
         if duration:
             parts.append(
                 f"Duration reported: {self._join(duration)}."
             )
 
+        # --------------------------------------------------------------
         # Severity
+        # --------------------------------------------------------------
+
         if severity:
             parts.append(
                 f"Reported severity descriptors: "
                 f"{self._join(severity)}."
             )
 
+        # --------------------------------------------------------------
         # Current medications
+        # --------------------------------------------------------------
+
         if medications:
             parts.append(
                 f"Current medications mentioned: "
                 f"{self._join(medications)}."
             )
 
-        # Allergies
+        # --------------------------------------------------------------
+        # Current allergy information
+        # --------------------------------------------------------------
+
         if allergies:
             parts.append(
                 f"Reported allergies: {self._join(allergies)}."
             )
         else:
-            # Check transcript for explicit negative allergy statement.
             negative_allergy_patterns = [
                 r"\bno allergies\b",
                 r"\bno known allergies\b",
@@ -144,19 +150,102 @@ class SOAPGenerator:
                     "Patient reports no known allergies."
                 )
 
-        # Past medical history
+        # --------------------------------------------------------------
+        # History extracted directly from current consultation
+        # --------------------------------------------------------------
+
         if past_history:
             parts.append(
                 f"Past medical history mentioned: "
                 f"{self._join(past_history)}."
             )
 
-        # Family history
         if family_history:
             parts.append(
                 f"Family history mentioned: "
                 f"{self._join(family_history)}."
             )
+
+        # --------------------------------------------------------------
+        # Previous patient history from history context
+        # --------------------------------------------------------------
+
+        if patient_history_context:
+            previous_history = patient_history_context.get(
+                "previous_patient_history",
+                {},
+            )
+
+            previous_diseases = previous_history.get(
+                "diseases",
+                [],
+            )
+
+            previous_allergies = previous_history.get(
+                "allergies",
+                [],
+            )
+
+            previous_medications = previous_history.get(
+                "medications",
+                [],
+            )
+
+            previous_medical_history = previous_history.get(
+                "past_medical_history",
+                [],
+            )
+
+            context_parts = []
+
+            if previous_diseases:
+                context_parts.append(
+                    f"Known previous conditions: "
+                    f"{self._join(previous_diseases)}."
+                )
+
+            if previous_medical_history:
+                context_parts.append(
+                    f"Previous medical history: "
+                    f"{self._join(previous_medical_history)}."
+                )
+
+            if previous_allergies:
+                context_parts.append(
+                    f"Known previous allergies: "
+                    f"{self._join(previous_allergies)}."
+                )
+
+            if previous_medications:
+                context_parts.append(
+                    f"Previously documented medications: "
+                    f"{self._join(previous_medications)}."
+                )
+
+            if context_parts:
+                parts.append(
+                    "Relevant previous patient history: "
+                    + " ".join(context_parts)
+                )
+
+            # ----------------------------------------------------------
+            # Family history from stored patient context
+            # ----------------------------------------------------------
+
+            context_family_history = patient_history_context.get(
+                "family_history",
+                [],
+            )
+
+            if context_family_history:
+                parts.append(
+                    f"Known family history: "
+                    f"{self._join(context_family_history)}."
+                )
+
+        # --------------------------------------------------------------
+        # Empty subjective section
+        # --------------------------------------------------------------
 
         if not parts:
             return (
@@ -178,13 +267,8 @@ class SOAPGenerator:
         """
         Generate the Objective section.
 
-        The current MVP does not infer objective findings.
-        It only reports information explicitly documented.
+        The MVP does not infer objective findings.
         """
-
-        # The current clinical NLP schema does not yet contain
-        # structured vital signs, examination findings, labs,
-        # or imaging results.
 
         return (
             "No objective measurements, vital signs, examination "
@@ -200,13 +284,15 @@ class SOAPGenerator:
         self,
         transcript: str,
         entities: Dict[str, List[str]],
+        patient_history_context: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Generate the Assessment section.
 
-        IMPORTANT:
-        Symptoms are NOT converted into diagnoses.
-        A diagnosis is reported only if it was explicitly extracted.
+        Symptoms are not converted into diagnoses.
+
+        A condition is reported only when it is explicitly
+        documented or previously known in the patient history.
         """
 
         diseases = entities.get("diseases", [])
@@ -224,6 +310,27 @@ class SOAPGenerator:
                     f"Symptoms documented in the conversation: "
                     f"{self._join(symptoms)}."
                 )
+
+            # ----------------------------------------------------------
+            # Add historical conditions as context, not new diagnoses
+            # ----------------------------------------------------------
+
+            if patient_history_context:
+                previous_history = patient_history_context.get(
+                    "previous_patient_history",
+                    {},
+                )
+
+                historical_diseases = previous_history.get(
+                    "diseases",
+                    [],
+                )
+
+                if historical_diseases:
+                    parts.append(
+                        f"Previously documented conditions: "
+                        f"{self._join(historical_diseases)}."
+                    )
 
             parts.append(
                 "No confirmed diagnosis was documented."
@@ -243,7 +350,8 @@ class SOAPGenerator:
         """
         Generate the Plan section.
 
-        Only explicit plan-related information is reported.
+        Only explicit treatment, medication, advice, or follow-up
+        information is reported.
 
         The system does NOT create new treatment recommendations.
         """
@@ -253,27 +361,33 @@ class SOAPGenerator:
 
         parts = []
 
-        # Split transcript into conversational sentences.
         sentences = re.split(
             r"(?<=[.!?])\s+",
             transcript.strip(),
         )
 
-        plan_keywords = [
-            "take",
-            "rest",
-            "drink",
-            "follow up",
-            "follow-up",
-            "prescribe",
-            "prescription",
-            "give you",
-            "advice",
-            "recommended",
-            "recommend",
-            "medicine",
-            "days",
-            "fluids",
+        plan_patterns = [
+            r"\bI'll give you\b",
+            r"\bI will give you\b",
+            r"\bwe'll give you\b",
+            r"\bwe will give you\b",
+            r"\btake the\b",
+            r"\btake your\b",
+            r"\btake .* medicine\b",
+            r"\bdrink .* fluids\b",
+            r"\bdrink warm fluids\b",
+            r"\brest\b",
+            r"\bfollow up\b",
+            r"\bfollow-up\b",
+            r"\bprescribe\b",
+            r"\bprescription\b",
+            r"\brecommended\b",
+            r"\brecommend\b",
+        ]
+
+        question_patterns = [
+            r"^\s*(do|does|did|are|is|have|has|how|what|when|where|why|can|could|would|will)\b",
+            r"\?\s*$",
         ]
 
         plan_sentences = []
@@ -284,11 +398,30 @@ class SOAPGenerator:
             if not sentence:
                 continue
 
-            lower = sentence.lower()
+            if any(
+                re.search(
+                    pattern,
+                    sentence,
+                    flags=re.IGNORECASE,
+                )
+                for pattern in question_patterns
+            ):
+                continue
+
+            if re.match(
+                r"^\s*(for|since)\b",
+                sentence,
+                flags=re.IGNORECASE,
+            ):
+                continue
 
             if any(
-                keyword in lower
-                for keyword in plan_keywords
+                re.search(
+                    pattern,
+                    sentence,
+                    flags=re.IGNORECASE,
+                )
+                for pattern in plan_patterns
             ):
                 if sentence.lower() not in [
                     item.lower()
@@ -296,14 +429,12 @@ class SOAPGenerator:
                 ]:
                     plan_sentences.append(sentence)
 
-        # Explicit plan information from transcript
         if plan_sentences:
             parts.append(
                 "Explicit plan information: "
                 + " ".join(plan_sentences)
             )
 
-        # Medication information
         if medications:
             medication_text = self._join(medications)
 
@@ -335,17 +466,17 @@ class SOAPGenerator:
         self,
         transcript: str,
         entities: Dict[str, List[str]],
+        patient_history_context: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, str]:
         """
         Generate a deterministic SOAP note for the MVP demo.
-
-        This mode does not require an external LLM/API.
         """
 
         return {
             "subjective": self._generate_subjective(
                 transcript,
                 entities,
+                patient_history_context,
             ),
             "objective": self._generate_objective(
                 transcript,
@@ -354,6 +485,7 @@ class SOAPGenerator:
             "assessment": self._generate_assessment(
                 transcript,
                 entities,
+                patient_history_context,
             ),
             "plan": self._generate_plan(
                 transcript,
@@ -369,6 +501,7 @@ class SOAPGenerator:
         self,
         transcript: str,
         entities: Optional[Dict[str, List[str]]] = None,
+        patient_history_context: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, str]:
         """
         Generate a structured SOAP note.
@@ -378,14 +511,11 @@ class SOAPGenerator:
                 Medical consultation transcript.
 
             entities:
-                Clinical entities extracted by the clinical NLP module.
+                Clinical entities extracted from the consultation.
 
-        Returns:
-            Dictionary containing:
-                subjective
-                objective
-                assessment
-                plan
+            patient_history_context:
+                Previously known patient history combined with
+                current consultation context.
         """
 
         if not transcript or not transcript.strip():
@@ -398,11 +528,11 @@ class SOAPGenerator:
 
         if self.mode == "demo":
             return self.generate_demo(
-                transcript,
-                entities,
+                transcript=transcript,
+                entities=entities,
+                patient_history_context=patient_history_context,
             )
 
-        # Future LLM/API implementation can be added here.
         raise NotImplementedError(
             f"SOAP generation mode '{self.mode}' "
             "is not implemented."
@@ -416,17 +546,16 @@ class SOAPGenerator:
 def generate_soap(
     transcript: str,
     entities: Optional[Dict[str, List[str]]] = None,
+    patient_history_context: Optional[Dict[str, Any]] = None,
     mode: str = "demo",
 ) -> Dict[str, str]:
-    """
-    Convenience function used by the AI pipeline.
-    """
 
     generator = SOAPGenerator(mode=mode)
 
     return generator.generate(
         transcript=transcript,
         entities=entities,
+        patient_history_context=patient_history_context,
     )
 
 
@@ -435,8 +564,6 @@ def generate_soap(
 # ----------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import argparse
-
     parser = argparse.ArgumentParser(
         description="Generate a SOAP note from a transcript."
     )
@@ -456,6 +583,15 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--history-context",
+        default=None,
+        help=(
+            "Optional path to a JSON file containing "
+            "patient history context."
+        ),
+    )
+
+    parser.add_argument(
         "--mode",
         default="demo",
         choices=["demo"],
@@ -464,7 +600,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Load entities if supplied.
     entities = {}
 
     if args.entities:
@@ -475,9 +610,20 @@ if __name__ == "__main__":
         ) as file:
             entities = json.load(file)
 
+    patient_history_context = None
+
+    if args.history_context:
+        with open(
+            args.history_context,
+            "r",
+            encoding="utf-8",
+        ) as file:
+            patient_history_context = json.load(file)
+
     result = generate_soap(
         transcript=args.transcript,
         entities=entities,
+        patient_history_context=patient_history_context,
         mode=args.mode,
     )
 
