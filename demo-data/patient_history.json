@@ -1,0 +1,18 @@
+{
+  "diseases": [
+    "diabetes",
+    "hypertension"
+  ],
+  "allergies": [
+    "penicillin"
+  ],
+  "medications": [
+    "metformin"
+  ],
+  "past_medical_history": [
+    "diabetes"
+  ],
+  "family_history": [
+    "heart disease"
+  ]
+}
