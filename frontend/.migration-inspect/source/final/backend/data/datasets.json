@@ -1,0 +1,110 @@
+[
+  {
+    "id": "DS-FDA-50543",
+    "category": "FDA Safety & Interactions",
+    "source": "FDA Drug Safety Bulletin",
+    "title": "NSAID-Induced Acute Kidney Injury & ACE-Inhibitor Interaction",
+    "text": "Concomitant administration of nonsteroidal anti-inflammatory drugs (Ibuprofen, Naproxen) with ACE inhibitors (Lisinopril) or ARBs impairs glomerular filtration via efferent arteriolar vasodilation coupled with afferent vasoconstriction. Clinicians must caution hypertensive patients against OTC NSAID overuse.",
+    "tokens": 34,
+    "ingested_at": "2026-08-29 13:17:30"
+  },
+  {
+    "id": "DS-CLI-50484",
+    "category": "Clinical Guidelines",
+    "source": "GOLD Global COPD Report",
+    "title": "GOLD 2026 COPD Staging & Inhaler Therapy Protocols",
+    "text": "Classification of airflow limitation in chronic obstructive pulmonary disease: Post-bronchodilator FEV1/FVC < 0.70 confirms diagnosis. Stage 1 Mild (FEV1 >= 80%), Stage 2 Moderate (50-79%), Stage 3 Severe (30-49%), Stage 4 Very Severe (< 30%). Initial maintenance therapy for Group E (high exacerbation risk) requires dual LABA/LAMA bronchodilation or triple therapy with inhaled corticosteroids if eosinophils >= 300 cells/uL.",
+    "tokens": 59,
+    "ingested_at": "2026-08-29 13:17:30"
+  },
+  {
+    "id": "DS-EHR-50407",
+    "category": "EHR Clinical Notes",
+    "source": "MIMIC-IV Cardio Cohort",
+    "title": "Cardiology Consultation: Atrial Fibrillation with RVR",
+    "text": "68M with established atrial fibrillation on Apixaban 5mg BID and Metoprolol Succinate 50mg daily. Complains of palpitations and lightheadedness for 3 days. ECG reveals irregular tachycardia at 128 bpm without ST elevation. Auscultation irregular rhythm, no murmurs. Lungs clear. Diltiazem titrated for rate control. Electrolytes normal (K 4.2 mEq/L, Mg 2.1 mg/dL).",
+    "tokens": 52,
+    "ingested_at": "2026-08-29 13:17:30"
+  },
+  {
+    "id": "DS-CLI-75539",
+    "category": "Clinical Guidelines",
+    "source": "Clinical Ingestion",
+    "title": "Respiratory Diagnosis & Antibiotic Safety",
+    "text": "Patients presenting with persistent non-productive cough, afebrile presentation, and clear bilateral auscultation should be evaluated for post-viral bronchial hyperreactivity versus ACE-inhibitor/CCB adverse effects. Avoid prescribing empiric beta-lactams (such as Amoxicillin or Penicillin) in patients with documented history of urticaria or drug allergy. If cough persists beyond 14 days, obtain a 2-view chest radiograph to rule out parenchymal infiltrates.",
+    "tokens": 58,
+    "ingested_at": "2026-08-29 13:09:35"
+  },
+  {
+    "id": "DS-FDA-46884",
+    "category": "FDA Safety & Interactions",
+    "source": "FDA Drug Safety Bulletin",
+    "title": "NSAID-Induced Acute Kidney Injury & ACE-Inhibitor Interaction",
+    "text": "Concomitant administration of nonsteroidal anti-inflammatory drugs (Ibuprofen, Naproxen) with ACE inhibitors (Lisinopril) or ARBs impairs glomerular filtration via efferent arteriolar vasodilation coupled with afferent vasoconstriction. Clinicians must caution hypertensive patients against OTC NSAID overuse.",
+    "tokens": 34,
+    "ingested_at": "2026-08-29 12:49:06"
+  },
+  {
+    "id": "DS-CLI-46884",
+    "category": "Clinical Guidelines",
+    "source": "GOLD Global COPD Report",
+    "title": "GOLD 2026 COPD Staging & Inhaler Therapy Protocols",
+    "text": "Classification of airflow limitation in chronic obstructive pulmonary disease: Post-bronchodilator FEV1/FVC < 0.70 confirms diagnosis. Stage 1 Mild (FEV1 >= 80%), Stage 2 Moderate (50-79%), Stage 3 Severe (30-49%), Stage 4 Very Severe (< 30%). Initial maintenance therapy for Group E (high exacerbation risk) requires dual LABA/LAMA bronchodilation or triple therapy with inhaled corticosteroids if eosinophils >= 300 cells/uL.",
+    "tokens": 59,
+    "ingested_at": "2026-08-29 12:49:06"
+  },
+  {
+    "id": "DS-EHR-46883",
+    "category": "EHR Clinical Notes",
+    "source": "MIMIC-IV Cardio Cohort",
+    "title": "Cardiology Consultation: Atrial Fibrillation with RVR",
+    "text": "68M with established atrial fibrillation on Apixaban 5mg BID and Metoprolol Succinate 50mg daily. Complains of palpitations and lightheadedness for 3 days. ECG reveals irregular tachycardia at 128 bpm without ST elevation. Auscultation irregular rhythm, no murmurs. Lungs clear. Diltiazem titrated for rate control. Electrolytes normal (K 4.2 mEq/L, Mg 2.1 mg/dL).",
+    "tokens": 52,
+    "ingested_at": "2026-08-29 12:49:06"
+  },
+  {
+    "id": "DS-MIMIC-001",
+    "category": "EHR Clinical Notes",
+    "source": "MIMIC-IV Ambulatory Benchmark",
+    "title": "Primary Care: 45M Persistent Cough & Exertional Dyspnea",
+    "text": "Patient presents with 2-week history of non-productive cough following viral upper respiratory infection. Endorses mild shortness of breath climbing two flights of stairs. Denies fever, chest pain, hemoptysis. Background essential hypertension treated with oral Amlodipine. Documented allergy to Penicillin with urticaria reaction. Auscultation reveals clear lung fields bilaterally without crackles or wheezing. Plan: CXR, verify Amlodipine dosage, symptomatic throat lozenges, avoid beta-lactam antibiotics.",
+    "tokens": 74,
+    "ingested_at": "2026-08-29 12:45:29"
+  },
+  {
+    "id": "DS-GUIDE-002",
+    "category": "Clinical Guidelines",
+    "source": "AHA/ACC Hypertension Guidelines",
+    "title": "Stage 1 & Stage 2 Hypertension Management Protocols",
+    "text": "First-line pharmacotherapy for essential hypertension in non-black adult patients includes thiazide diuretics, CCBs (such as Amlodipine 5-10 mg daily), and ACE-inhibitors or ARBs. Initial evaluation requires resting blood pressure measurement across two separate visits, serum creatinine, electrolytes, and lipid panel. Clinicians must confirm exact dosage and verify adherence before adjusting antihypertensive regimens.",
+    "tokens": 68,
+    "ingested_at": "2026-08-29 12:45:29"
+  },
+  {
+    "id": "DS-DRUG-003",
+    "category": "FDA Safety & Interactions",
+    "source": "FDA Adverse Event Reporting & Drug Safety",
+    "title": "Beta-Lactam Antibiotic Cross-Reactivity in Penicillin-Allergic Patients",
+    "text": "Patients with documented severe IgE-mediated Penicillin hypersensitivity (anaphylaxis, angioedema, widespread urticarial rash) carry up to a 10% risk of cross-reactivity with first-generation cephalosporins and aminopenicillins (Amoxicillin, Ampicillin). Verbal patient statements claiming lack of allergies must be cross-referenced against historical electronic medical records prior to ordering antimicrobials.",
+    "tokens": 62,
+    "ingested_at": "2026-08-29 12:45:29"
+  },
+  {
+    "id": "DS-MIMIC-004",
+    "category": "EHR Clinical Notes",
+    "source": "Endocrinology Clinical Cohort",
+    "title": "Routine Type 2 Diabetes & Primary Hypothyroidism Review",
+    "text": "62F presented for 6-month routine metabolic review. Denies polyuria, polydipsia, or peripheral neuropathy. On Metformin 500mg BID and Levothyroxine 75mcg daily. In-clinic fasting fingerstick glucose 108 mg/dL. Recent HbA1c 6.4%. Thyroid function tests within target TSH 2.1 mIU/L. Exam shows diabetic foot exam intact sensation 10g monofilament. Continued current therapy with 6-month follow-up.",
+    "tokens": 65,
+    "ingested_at": "2026-08-29 12:45:29"
+  },
+  {
+    "id": "DS-GUIDE-005",
+    "category": "Clinical Guidelines",
+    "source": "IDSA Pharyngitis Management Guidelines",
+    "title": "Acute Pharyngitis & Centor Diagnostic Scoring",
+    "text": "Evaluation of acute sore throat requires assessing Centor criteria: absence of cough, tonsillar exudates, tender anterior cervical adenopathy, and history of fever. Patients with scores 0-1 have low probability of Group A Streptococcus and do not warrant antibiotic therapy. Symptomatic treatment with warm salt water gargles and oral analgesics is indicated.",
+    "tokens": 61,
+    "ingested_at": "2026-08-29 12:45:29"
+  }
+]

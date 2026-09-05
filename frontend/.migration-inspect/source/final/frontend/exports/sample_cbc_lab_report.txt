@@ -1,0 +1,35 @@
+================================================================================
+METROHEALTH CLINICAL PATHOLOGY LABORATORIES
+SYNTHETIC DEMO REPORT - FOR TESTING PURPOSES ONLY
+================================================================================
+PATIENT NAME:    Arun Kumar                     SPECIMEN ID:    SP-992014
+PATIENT ID:      DEMO-001                       COLLECTION DATE: 2026-08-28 08:30 AM
+AGE / SEX:       45 / Male                      ORDERING PHYS:  Dr. Demo Clinician
+REPORT TYPE:     Complete Blood Count (CBC) with Automated Differential
+STATUS:          FINAL COMPLETED
+================================================================================
+
+TEST NAME                   RESULT    FLAG    REFERENCE INTERVAL   UNITS
+--------------------------------------------------------------------------------
+Hemoglobin                  11.2      LOW     13.0 - 17.5          g/dL
+Hematocrit                  34.8      LOW     39.0 - 50.0          %
+White Blood Cell (WBC)      7.4               4.5 - 11.0           x10^3/uL
+Platelet Count              245               150 - 450            x10^3/uL
+Red Blood Cell (RBC)        4.1       LOW     4.3 - 5.9            x10^6/uL
+MCV                         82.4              80.0 - 100.0         fL
+MCH                         27.1              27.0 - 33.0          pg
+MCHC                        32.2              31.5 - 36.0          g/dL
+RDW                         14.1              11.5 - 14.5          %
+
+DIFFERENTIAL:
+Neutrophils (%)             62.0              40.0 - 70.0          %
+Lymphocytes (%)             28.5              20.0 - 45.0          %
+Monocytes (%)               6.1               2.0 - 10.0           %
+Eosinophils (%)             2.8               1.0 - 5.0            %
+Basophils (%)               0.6               0.0 - 2.0            %
+
+================================================================================
+PATHOLOGIST NOTE:
+Normocytic, mildly hypochromic RBC indices noted. Suggest correlation with
+iron profile (serum ferritin, TIBC) and occult blood screening.
+================================================================================

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediScribe — Lab Report Analyzer & Safety Check</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">M+</div>
+        <div>
+          <span class="brand-title">MediScribe</span>
+          <span class="brand-subtitle">Lab Report Analyzer &bull; Range Safety</span>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="consultation.html?new=true" class="nav-link">New Consultation</a>
+        <a href="history.html" class="nav-link">Consultation History</a>
+        <a href="labs.html" class="nav-link active">Lab Reports</a>
+        <a href="review.html" class="nav-link">Review &amp; Approve</a>
+        <a href="training.html" class="nav-link">AI Training</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <a href="training.html" id="backendStatusPill" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #dcfce7; color: #15803d; border: 1px solid #86efac;">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
+          <span id="backendStatusText">AI Backend: Online</span>
+        </a>
+        <div class="clinician-badge">
+          <div class="clinician-avatar">DC</div>
+          <span>Dr. Demo Clinician</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-content">
+
+    <div class="disclaimer-box">
+      <strong>Pathology Analysis Protocol:</strong> MediScribe parses uploaded clinical pathology reports, extracts numerical laboratory values, and compares them against supplied reference ranges. Parameters falling beyond reference thresholds are labeled strictly as <em>"Outside supplied reference range"</em>. MediScribe does not autonomously diagnose clinical diseases.
+    </div>
+
+    <!-- Upload Dropzone & Quick Samples Card -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Upload Diagnostic Document</span>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-sm btn-secondary" id="btnLoadSampleCBC">Load Sample CBC Report</button>
+          <button class="btn btn-sm btn-secondary" id="btnLoadSampleBMP">Load Sample BMP Report</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <input type="file" id="labFileInput" style="display: none;" accept=".txt,.csv,.pdf,.png,.jpg,.jpeg">
+        
+        <div class="lab-upload-dropzone" id="labDropzone">
+          <div class="lab-dropzone-icon">📄</div>
+          <div style="font-weight: 700; font-size: 15px; color: var(--text-primary); margin-bottom: 4px;">
+            Drag &amp; Drop Diagnostic Lab Report or Click to Browse
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); max-width: 480px; margin: 0 auto 12px;">
+            Supports plain text (.txt, .csv), image reports (.png, .jpg), and simulated medical PDF documents.
+          </p>
+          <div style="display: inline-flex; gap: 8px;">
+            <button class="btn btn-sm btn-primary" type="button">Select File from Computer</button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted);">
+          <span>Client-side OCR / text parser &bull; Max file size 10MB</span>
+          <span>Sample files available in <code>exports/sample_cbc_lab_report.txt</code></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parsed Report Display Card -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <span class="card-title" id="labReportTitle">Laboratory Panel Results</span>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" id="labReportMeta">
+            Patient: Arun Kumar (DEMO-001) &bull; Order Date: 2026-08-28
+          </div>
+        </div>
+        <div>
+          <button id="btnAddToConsultation" class="btn btn-success btn-sm">
+            + Add to Active Consultation Note
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- Out-of-Range Banner Mount -->
+        <div id="labOutOfRangeSummary"></div>
+
+        <!-- Structured Lab Table -->
+        <div class="lab-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Test Parameter</th>
+                <th>Result Value</th>
+                <th>Flag</th>
+                <th>Reference Interval</th>
+                <th>Clinical Interpretation Status</th>
+              </tr>
+            </thead>
+            <tbody id="labResultsTableBody">
+              <!-- Populated by MediScribe.Labs -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <span style="font-size: 11px; color: var(--text-muted);">
+          Clicking <strong>Add to Active Consultation Note</strong> will append this laboratory panel to the Objective section of the current encounter.
+        </span>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts: Classic Vanilla JS with window.MediScribe Namespace -->
+  <script src="data/demo-data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/labs.js"></script>
+  <script src="js/demo.js"></script>
+</body>
+</html>

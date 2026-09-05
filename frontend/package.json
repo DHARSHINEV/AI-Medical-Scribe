@@ -1,0 +1,9 @@
+{
+  "name": "mediscribe-react",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"dev": "vite", "build": "tsc -b && vite build", "preview": "vite preview"},
+  "dependencies": {"@vercel/analytics":"1.6.1","class-variance-authority":"^0.7.1","clsx":"^2.1.1","lucide-react":"^1.16.0","react":"^19","react-dom":"^19","react-router-dom":"^7.18.3","tailwind-merge":"^3.3.1","tw-animate-css":"^1.4.0"},
+  "devDependencies": {"@tailwindcss/postcss":"^4.3.3","@types/node":"^24","@types/react":"^19","@types/react-dom":"^19","@vitejs/plugin-react":"^6.1.1","postcss":"^8.5","tailwindcss":"^4.3.3","typescript":"5.7.3","vite":"^8.2.2"}
+}

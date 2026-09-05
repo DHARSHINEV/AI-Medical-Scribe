@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediScribe — Final Clinician Review & Second Look</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">M+</div>
+        <div>
+          <span class="brand-title">MediScribe</span>
+          <span class="brand-subtitle">Clinician Review &amp; Approval Gateway</span>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="consultation.html?new=true" class="nav-link">New Consultation</a>
+        <a href="history.html" class="nav-link">Consultation History</a>
+        <a href="labs.html" class="nav-link">Lab Reports</a>
+        <a href="review.html" class="nav-link active">Review &amp; Approve</a>
+        <a href="training.html" class="nav-link">AI Training</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <a href="training.html" id="backendStatusPill" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #dcfce7; color: #15803d; border: 1px solid #86efac;">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
+          <span id="backendStatusText">AI Backend: Online</span>
+        </a>
+        <div class="clinician-badge">
+          <div class="clinician-avatar">DC</div>
+          <span>Dr. Demo Clinician</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-content" id="reviewContentArea">
+
+    <!-- Approval Banner Container (updates on approval) -->
+    <div id="approvalBannerContainer"></div>
+
+    <!-- Patient Demographic Summary Card -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-body" id="reviewPatientHeader">
+        <!-- Populated dynamically by MediScribe.Review -->
+      </div>
+    </div>
+
+    <!-- 2-Column Review Grid -->
+    <div class="review-grid">
+
+      <!-- LEFT COLUMN: Structured SOAP Note with Section Regeneration -->
+      <section>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              SOAP Documentation (Editable)
+            </span>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-sm btn-secondary" id="btnCopyReviewSOAP">Copy Note</button>
+              <button class="btn btn-sm btn-secondary" id="btnPrintReviewPDF">Print / Save PDF</button>
+              <button class="btn btn-sm btn-secondary" id="btnExportReviewJSON">Export JSON</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+              You may edit any section directly. Click <strong>↻ Regenerate Section</strong> on a specific section to re-run AI generation for that block only, without modifying other sections.
+            </p>
+            <div id="soapEditorContainer">
+              <!-- Rendered by MediScribe.Review -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: Clinical Second Look, Safety Matrix, Coding & Sign-off -->
+      <aside>
+
+        <!-- Clinical Second Look Card (Section 12 & 38) -->
+        <div id="reviewSecondLookContainer" style="margin-bottom: 20px;"></div>
+
+        <!-- Allergy & Prescription Safety Matrix (Section 14 & 15) -->
+        <div id="safetyMatrixContainer"></div>
+
+        <!-- Documentation-Based Coding Suggestions (Section 22) -->
+        <div id="codingSuggestionsContainer"></div>
+
+        <!-- Smart Follow-Up Review Points (Section 16) -->
+        <div id="followUpSectionContainer"></div>
+
+        <!-- Final Clinician Verification Checklist & Approval (Section 23) -->
+        <div id="checklistContainer"></div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts: Classic Vanilla JS with window.MediScribe Namespace -->
+  <script src="data/demo-data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/analysis.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/review.js"></script>
+  <script src="js/demo.js"></script>
+</body>
+</html>

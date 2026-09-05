@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediScribe — Consultation History & Clinical Records</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">M+</div>
+        <div>
+          <span class="brand-title">MediScribe</span>
+          <span class="brand-subtitle">Consultation History &amp; Records</span>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="consultation.html?new=true" class="nav-link">New Consultation</a>
+        <a href="history.html" class="nav-link active">Consultation History</a>
+        <a href="labs.html" class="nav-link">Lab Reports</a>
+        <a href="review.html" class="nav-link">Review &amp; Approve</a>
+        <a href="training.html" class="nav-link">AI Training</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <a href="training.html" id="backendStatusPill" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #dcfce7; color: #15803d; border: 1px solid #86efac;">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
+          <span id="backendStatusText">AI Backend: Online</span>
+        </a>
+        <div class="clinician-badge">
+          <div class="clinician-avatar">DC</div>
+          <span>Dr. Demo Clinician</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-content">
+
+    <div class="disclaimer-box">
+      <strong>Consultation Archive:</strong> Stored locally using browser <code>localStorage</code>. Demonstrates persistent records across Draft, Under Review, and Approved states. In a production enterprise deployment, this module interfaces with HIPAA-compliant EHR backends.
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Consultation Records</span>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" id="historySearchInput" class="form-input" style="width: 220px; padding: 6px 10px; font-size: 12px;" placeholder="Search patient, complaint...">
+          <select id="historyStatusFilter" class="form-select" style="width: 140px; padding: 6px 10px; font-size: 12px;">
+            <option value="ALL">All Statuses</option>
+            <option value="Draft">Draft Notes</option>
+            <option value="Reviewed">Reviewed Notes</option>
+            <option value="Approved">Approved Notes</option>
+          </select>
+          <a href="consultation.html?new=true" id="btnNewConsultationFromHistory" class="btn btn-primary btn-sm">
+            + New Consultation
+          </a>
+        </div>
+      </div>
+      <div class="card-body" style="padding: 0;">
+        <div class="lab-table-container" style="margin-top: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Patient / ID</th>
+                <th>Date &amp; Time</th>
+                <th>Chief Complaint</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Clinician</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Populated by MediScribe.History -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-size: 11px; color: var(--text-muted);">
+          Records are stored in local browser memory and can be exported as structured JSON or print-ready PDF.
+        </span>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts: Classic Vanilla JS with window.MediScribe Namespace -->
+  <script src="data/demo-data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/demo.js"></script>
+</body>
+</html>
