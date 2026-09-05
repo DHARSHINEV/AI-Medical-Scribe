@@ -1,18 +1,23 @@
 import { useState } from 'react'
-import { Check, Mic, ShieldCheck, Tag } from 'lucide-react'
+import { Check, FileAudio, Mic, Radio, ShieldCheck, Tag } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { Notice, Panel } from '../components/layout/AppShell'
 import { useConsultation } from '../hooks/useConsultation'
 import { useRecording } from '../hooks/useRecording'
+import { useAmbientDocumentation } from '../hooks/useAmbientDocumentation'
 import { RecordingControls } from '../components/consultation/RecordingControls'
+import { AmbientRecorder } from '../components/consultation/AmbientRecorder'
 import { useConsultationProcessing } from '../hooks/useConsultationProcessing'
+import { clinicalService, safetyService } from '../services/domainServices'
 
 export default function ConsultationPage() {
   const { id = '' } = useParams()
   const c = useConsultation(id)
   const r = useRecording()
+  const [recordingMode, setRecordingMode] = useState<'ambient' | 'standard'>('ambient')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [activeTab, setActiveTab] = useState<'facts' | 'pipeline'>('facts')
+  const [isProcessingAmbientAI, setIsProcessingAmbientAI] = useState(false)
 
   const p = useConsultationProcessing(
     c.consultation.id,
@@ -20,6 +25,29 @@ export default function ConsultationPage() {
     (status) => c.setStatus(status === 'processing' ? 'processing' : status),
     () => c.refresh()
   )
+
+  const ambient = useAmbientDocumentation(c.consultation.id, (segments) => {
+    if (segments && segments.length > 0) {
+      c.setTranscript?.(segments)
+      c.refresh()
+    }
+  })
+
+  const handleProcessAmbientAI = async () => {
+    setIsProcessingAmbientAI(true)
+    try {
+      // 1. Clinical entity extraction
+      await clinicalService.extractClinicalEntities(c.consultation.id).catch(() => {})
+      // 2. SOAP note synthesis
+      await clinicalService.generateSOAPNote(c.consultation.id).catch(() => {})
+      // 3. Clinical Second Look safety validation
+      await safetyService.validateConsultation(c.consultation.id).catch(() => {})
+      // 4. Refresh authoritative consultation state
+      await c.refresh()
+    } finally {
+      setIsProcessingAmbientAI(false)
+    }
+  }
 
   const startProcessing = () => {
     const audioPayload = selectedFile || r.audioBlob
@@ -100,88 +128,123 @@ export default function ConsultationPage() {
         {/* Center Panel: Real Transcript & Recording */}
         <Panel
           title="Consultation transcript"
-          label={c.consultation.mode === 'demo' ? 'Demo fixture' : 'Live recording'}
+          label={
+            recordingMode === 'ambient'
+              ? 'Ambient / Ghost Viewer'
+              : c.consultation.mode === 'demo'
+              ? 'Demo fixture'
+              : 'Standard Recording'
+          }
         >
-          <div className="recorder">
-            <span className={`record-btn ${r.isRecording ? 'active' : ''}`}>
-              <Mic size={18} />
-            </span>
-            <div>
-              <b>
-                {r.isRecording
-                  ? r.isPaused
-                    ? 'Recording paused'
-                    : 'Recording encounter'
-                  : hasAudioReady
-                  ? 'Audio payload ready'
-                  : 'Ready to record'}
-              </b>
-              <small>
-                {r.error ??
-                  (r.isRecording
-                    ? 'Microphone active'
-                    : selectedFile
-                    ? `Selected file: ${selectedFile.name}`
-                    : 'Capture audio via mic or select a test audio file')}
-              </small>
-            </div>
-            <span className="timer">
-              {String(Math.floor(r.duration / 60)).padStart(2, '0')}:
-              {String(r.duration % 60).padStart(2, '0')}
-            </span>
+          {/* Mode Switcher Tabs */}
+          <div className="ambient-mode-switch">
+            <button
+              type="button"
+              className={`ambient-tab-btn ${recordingMode === 'ambient' ? 'active' : ''}`}
+              onClick={() => setRecordingMode('ambient')}
+            >
+              <Radio size={14} /> Ambient Ghost Mode
+            </button>
+            <button
+              type="button"
+              className={`ambient-tab-btn ${recordingMode === 'standard' ? 'active' : ''}`}
+              onClick={() => setRecordingMode('standard')}
+            >
+              <FileAudio size={14} /> Standard Audio / Upload
+            </button>
           </div>
 
-          <RecordingControls
-            recording={{
-              ...r,
-              onFileSelect: handleFileSelect,
-              selectedFileName: selectedFile?.name,
-              resetRecording: () => {
-                r.resetRecording()
-                setSelectedFile(null)
-              },
-            }}
-          />
+          {recordingMode === 'ambient' ? (
+            <AmbientRecorder
+              ambient={ambient}
+              onProcessAI={handleProcessAmbientAI}
+              isProcessingAI={isProcessingAmbientAI}
+            />
+          ) : (
+            <>
+              <div className="recorder">
+                <span className={`record-btn ${r.isRecording ? 'active' : ''}`}>
+                  <Mic size={18} />
+                </span>
+                <div>
+                  <b>
+                    {r.isRecording
+                      ? r.isPaused
+                        ? 'Recording paused'
+                        : 'Recording encounter'
+                      : hasAudioReady
+                      ? 'Audio payload ready'
+                      : 'Ready to record'}
+                  </b>
+                  <small>
+                    {r.error ??
+                      (r.isRecording
+                        ? 'Microphone active'
+                        : selectedFile
+                        ? `Selected file: ${selectedFile.name}`
+                        : 'Capture audio via mic or select a test audio file')}
+                  </small>
+                </div>
+                <span className="timer">
+                  {String(Math.floor(r.duration / 60)).padStart(2, '0')}:
+                  {String(r.duration % 60).padStart(2, '0')}
+                </span>
+              </div>
 
-          {hasAudioReady && (
-            <div style={{ padding: '0 14px 14px' }}>
-              <button
-                className="btn primary"
-                onClick={startProcessing}
-                disabled={p.step !== 'idle' && p.step !== 'error'}
-              >
-                {p.step === 'idle'
-                  ? 'Process recording with AI'
-                  : p.step === 'error'
-                  ? 'Retry AI processing'
-                  : 'Processing audio...'}
-              </button>
-            </div>
+              <RecordingControls
+                recording={{
+                  ...r,
+                  onFileSelect: handleFileSelect,
+                  selectedFileName: selectedFile?.name,
+                  resetRecording: () => {
+                    r.resetRecording()
+                    setSelectedFile(null)
+                  },
+                }}
+              />
+
+              {hasAudioReady && (
+                <div style={{ padding: '0 14px 14px' }}>
+                  <button
+                    className="btn primary"
+                    onClick={startProcessing}
+                    disabled={p.step !== 'idle' && p.step !== 'error'}
+                  >
+                    {p.step === 'idle'
+                      ? 'Process recording with AI'
+                      : p.step === 'error'
+                      ? 'Retry AI processing'
+                      : p.stageLabel || 'Processing audio...'}
+                  </button>
+                </div>
+              )}
+
+              <div className="transcript-list">
+                {c.transcript.length === 0 && (
+                  <div style={{ padding: '24px 14px', color: 'var(--muted)', fontSize: '12px' }}>
+                    No transcript segments yet. Record or upload an encounter audio file and click &quot;Process recording with AI&quot;.
+                  </div>
+                )}
+                {c.transcript.map((s) => (
+                  <div className="transcript-line" id={`evidence-${s.id}`} key={s.id}>
+                    <time>{s.time}</time>
+                    <b className={`speaker ${s.speaker.toLowerCase() === 'patient' ? 'patient' : ''}`}>
+                      {s.speaker}
+                    </b>
+                    <p>{s.text}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ padding: '8px 14px', borderTop: '1px solid var(--line)', background: '#fcfdfe' }}>
+                <small style={{ color: 'var(--muted)', fontSize: '10px' }}>
+                  ℹ Speaker labeling is generated using heuristic two-speaker alternating diarization for assistive review, not voice-biometric acoustic diarization.
+                </small>
+              </div>
+            </>
           )}
-
-          <div className="transcript-list">
-            {c.transcript.length === 0 && (
-              <div style={{ padding: '24px 14px', color: 'var(--muted)', fontSize: '12px' }}>
-                No transcript segments yet. Record or upload an encounter audio file and click &quot;Process recording with AI&quot;.
-              </div>
-            )}
-            {c.transcript.map((s) => (
-              <div className="transcript-line" id={`evidence-${s.id}`} key={s.id}>
-                <time>{s.time}</time>
-                <b className={`speaker ${s.speaker.toLowerCase() === 'patient' ? 'patient' : ''}`}>
-                  {s.speaker}
-                </b>
-                <p>{s.text}</p>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ padding: '8px 14px', borderTop: '1px solid var(--line)', background: '#fcfdfe' }}>
-            <small style={{ color: 'var(--muted)', fontSize: '10px' }}>
-              ℹ Speaker labeling is generated using heuristic two-speaker alternating diarization for assistive review, not voice-biometric acoustic diarization.
-            </small>
-          </div>
         </Panel>
+
 
         {/* Right Panel: AI Processing Pipeline & Clinical Entities */}
         <Panel title="Clinical AI extraction" label={p.step === 'idle' ? c.stage : p.step}>

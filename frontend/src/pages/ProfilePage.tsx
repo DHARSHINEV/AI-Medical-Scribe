@@ -99,9 +99,14 @@ export default function ProfilePage() {
         eyebrow={mode === 'demo' ? 'PATIENT PROFILE · SYNTHETIC' : 'PATIENT PROFILE · CLINICAL RECORD'}
         title={patient.name}
       >
-        <button className="btn primary" onClick={handleStartEncounter} disabled={starting}>
-          <Stethoscope size={16} /> {starting ? 'Creating encounter...' : 'Start encounter'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Link to={`/labs?patientId=${patient.id}`} className="btn secondary">
+            <FileText size={16} /> Lab reports
+          </Link>
+          <button className="btn primary" onClick={handleStartEncounter} disabled={starting}>
+            <Stethoscope size={16} /> {starting ? 'Creating encounter...' : 'Start encounter'}
+          </button>
+        </div>
       </PageTitle>
 
       {error && <div className="form-error" style={{ marginBottom: '16px' }}>{error}</div>}

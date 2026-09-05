@@ -12,6 +12,17 @@ export type ProcessingStep =
   | 'review'
   | 'error'
 
+export const STAGE_LABELS: Record<ProcessingStep, string> = {
+  idle: 'Ready to process',
+  uploading: 'Uploading Audio...',
+  transcribing: 'Transcribing Audio...',
+  extracting: 'Extracting Clinical Information...',
+  generating: 'Generating SOAP Note...',
+  safety_check: 'Running Clinical Second Look...',
+  review: 'Ready for Review',
+  error: 'Processing Error',
+}
+
 export function useConsultationProcessing(
   id: string | number,
   onTranscript: (segments: TranscriptSegment[]) => void,
@@ -34,18 +45,32 @@ export function useConsultationProcessing(
         onTranscript(transcript)
 
         setStep('extracting')
-        await clinicalService.getClinicalEntities(id).catch(() => clinicalService.extractClinicalEntities(id))
+        await clinicalService.getClinicalEntities(id).then(async (entities) => {
+          if (!entities || entities.length === 0) {
+            await clinicalService.extractClinicalEntities(id)
+          }
+        }).catch(async () => {
+          await clinicalService.extractClinicalEntities(id)
+        })
 
         setStep('generating')
-        await clinicalService.getSOAPNote(id).catch(() => clinicalService.generateSOAPNote(id))
+        await clinicalService.getSOAPNote(id).catch(async () => {
+          await clinicalService.generateSOAPNote(id)
+        })
 
         setStep('safety_check')
-        await safetyService.getSafetySummary(id).catch(() => safetyService.validateConsultation(id))
+        await safetyService.getSafetySummary(id).then(async (summary) => {
+          if (!summary || summary.alert_count === 0) {
+            await safetyService.validateConsultation(id).catch(() => {})
+          }
+        }).catch(async () => {
+          await safetyService.validateConsultation(id).catch(() => {})
+        })
 
         setStep('review')
         onStatus('review')
         if (onComplete) {
-          onComplete()
+          await onComplete()
         }
       } catch (cause) {
         setStep('error')
@@ -57,10 +82,17 @@ export function useConsultationProcessing(
     [id, onStatus, onTranscript, onComplete]
   )
 
+  const retry = useCallback(() => {
+    setStep('idle')
+    setError(null)
+  }, [])
+
   return {
     step,
+    stageLabel: STAGE_LABELS[step],
     error,
     process,
-    retry: () => setStep('idle'),
+    retry,
   }
 }
+

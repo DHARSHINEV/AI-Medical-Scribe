@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import PrescriptionPage from './pages/PrescriptionPage'
 import HistoryPage from './pages/HistoryPage'
+import LabsPage from './pages/LabsPage'
 
 function GenericPage({ title, eyebrow }: { title: string; eyebrow: string }) {
   return (
@@ -39,7 +40,7 @@ export default function App() {
           <Route path="/review/:id" element={<ReviewPage />} />
           <Route path="/prescription/:id" element={<PrescriptionPage />} />
           <Route path="/history" element={<HistoryPage />} />
-          <Route path="/labs" element={<GenericPage eyebrow="SECONDARY WORKSPACE" title="Lab reports" />} />
+          <Route path="/labs" element={<LabsPage />} />
           <Route path="/settings" element={<GenericPage eyebrow="WORKSPACE CONFIGURATION" title="Settings" />} />
           <Route path="/research" element={<GenericPage eyebrow="ADVANCED / RESEARCH" title="AI training & research" />} />
         </Route>

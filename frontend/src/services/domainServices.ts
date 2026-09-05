@@ -5,6 +5,8 @@ import type { ClinicalEntity } from '../types/clinical'
 import type { SOAPNote } from '../types/soap'
 import type { SafetyAlert, SafetySummary } from '../types/safety'
 import type { AuditLog } from '../types/audit'
+import type { LabReport } from '../types/lab'
+
 
 export const patientService = {
   getPatients: () => api.get<Patient[]>('/api/patients'),
@@ -83,9 +85,33 @@ export const safetyService = {
     api.post<SafetyAlert>(`/api/consultations/${consultationId}/safety/${alertId}/unresolve`, {}),
 }
 
+export const labService = {
+  getLabs: (patientId?: string | number) => {
+    const url = patientId ? `/api/labs?patient_id=${patientId}` : '/api/labs'
+    return api.get<LabReport[]>(url)
+  },
+  getPatientLabs: (patientId: string | number) =>
+    api.get<LabReport[]>(`/api/patients/${patientId}/labs`),
+  uploadLabReport: (
+    patientId: string | number,
+    file: File,
+    title?: string,
+    consultationId?: string | number
+  ) => {
+    const form = new FormData()
+    form.append('file', file)
+    if (title) form.append('title', title)
+    if (consultationId) form.append('consultation_id', String(consultationId))
+    return apiMultipart<LabReport>(`/api/patients/${patientId}/labs`, form)
+  },
+  deleteLabReport: (id: string | number) => api.delete<void>(`/api/labs/${id}`),
+  getLabDownloadUrl: (id: string | number) => `/api/labs/${id}/file`,
+}
+
 export const noteService = {
   getSOAPNote: clinicalService.getSOAPNote,
   generateSOAPNote: clinicalService.generateSOAPNote,
   updateSOAPNote: clinicalService.updateSOAPNote,
   approveConsultation: consultationService.approveConsultation,
 }
+

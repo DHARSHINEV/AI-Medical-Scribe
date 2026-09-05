@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.ambient import router as ambient_router
 from app.api.auth import router as auth_router
 from app.api.clinical import router as clinical_router
 from app.api.consultations import router as consultations_router
+from app.api.labs import router as labs_router
 from app.api.notes import router as notes_router
 from app.api.patients import router as patients_router
 from app.api.safety import router as safety_router
@@ -42,6 +44,10 @@ app.include_router(transcription_router)
 app.include_router(clinical_router)
 app.include_router(notes_router)
 app.include_router(safety_router)
+app.include_router(ambient_router)
+app.include_router(labs_router)
+
+
 
 
 
