@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, ForeignKey, String
+from sqlalchemy import DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
@@ -43,6 +43,16 @@ class Consultation(Base):
         nullable=True,
     )
 
+    approved_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=True,
+    )
+
+    approved_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
@@ -57,4 +67,28 @@ class Consultation(Base):
     )
 
     patient = relationship("Patient")
-    doctor = relationship("User")
+    doctor = relationship("User", foreign_keys=[doctor_id])
+    approver = relationship("User", foreign_keys=[approved_by])
+
+    segments = relationship(
+        "TranscriptSegment",
+        back_populates="consultation",
+        cascade="all, delete-orphan",
+        order_by="TranscriptSegment.start_time",
+    )
+    clinical_entities = relationship(
+        "ClinicalEntity",
+        back_populates="consultation",
+        cascade="all, delete-orphan",
+    )
+    clinical_note = relationship(
+        "ClinicalNote",
+        back_populates="consultation",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
+    alerts = relationship(
+        "ClinicalAlert",
+        back_populates="consultation",
+        cascade="all, delete-orphan",
+    )

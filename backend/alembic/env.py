@@ -3,7 +3,16 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from app.database.base import Base
-from app.models import User, Patient, Consultation
+from app.models import (
+    User,
+    Patient,
+    Consultation,
+    TranscriptSegment,
+    ClinicalEntity,
+    ClinicalNote,
+    ClinicalAlert,
+    AuditLog,
+)
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -66,7 +75,9 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            render_as_batch=True,
         )
 
         with context.begin_transaction():

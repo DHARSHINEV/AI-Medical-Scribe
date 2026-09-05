@@ -1,1 +1,14 @@
-export interface Patient { id: string; name: string; age: number; sex: string; mrn: string; complaint: string; conditions: string[]; medications: string[]; allergies: string[] }
+export interface Patient {
+  id: number | string
+  name: string
+  age?: number | null
+  gender?: string | null
+  sex?: string
+  mrn: string
+  complaint?: string
+  conditions: string[]
+  medications: string[]
+  allergies: string[]
+  created_at?: string
+  updated_at?: string
+}

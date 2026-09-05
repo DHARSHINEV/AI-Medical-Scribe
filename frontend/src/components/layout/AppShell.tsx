@@ -3,10 +3,153 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Beaker, ClipboardCheck, History, LayoutDashboard, LogOut, Settings, Stethoscope, Users } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useConsultationStore } from '../../context/ConsultationContext'
-const links=[['/','Dashboard',LayoutDashboard],['/patients','Patients',Users],['/consultations/new','Consultation Workspace',Stethoscope],['/history','History',History],['/labs','Lab Reports',Beaker],['/settings','Settings',Settings]] as const
-export function AppShell({children}:{children:ReactNode}){const {user,logout}=useAuth();const navigate=useNavigate();const {consultations}=useConsultationStore();const activeConsultation=consultations[0];return <div className="app"><aside><Link to="/" className="brand"><span className="brandmark">M+</span><span><b>MediScribe</b><small>Clinical documentation workspace</small></span></Link><div className="mode"><span className="dot demo"/> {user?.email.includes('synthetic')?'DEMO MODE':'LIVE MODE'} <small>{user?.email.includes('synthetic')?'Synthetic data':'Backend session'}</small></div><nav>{links.map(([to,label,Icon])=><NavLink key={to} to={to} className={({isActive})=>isActive?'active':''}><Icon size={17}/>{label}</NavLink>)}{activeConsultation&&<NavLink to={`/review/${activeConsultation.id}`} className={({isActive})=>isActive?'active':''}><ClipboardCheck size={17}/>Review & Approve</NavLink>}</nav><div className="aside-bottom"><Link to="/research"><ClipboardCheck size={16}/> Advanced research</Link><div className="clinician"><span>{user?.name?.split(' ').map(x=>x[0]).join('').slice(0,2)||'--'}</span><div>{user?.name||'Unauthenticated'}<small>{user?.role||'No active session'}</small></div><button className="icon-button" aria-label="Log out" onClick={async()=>{await logout();navigate('/login')}}><LogOut size={15}/></button></div></div></aside><main><header><div><span className="eyebrow">MediScribe / Clinical workspace</span><h1>Documentation, with a second look.</h1></div><div className="header-status"><span className="status-pill"><i/> {user?.email.includes('synthetic')?'Demo Mode':'Live Session'}</span><span className="avatar">{user?.name?.slice(0,2).toUpperCase()||'--'}</span></div></header>{children}</main></div>}
-export function Notice(){return <div className="notice"><strong>Clinical safety notice</strong> MediScribe is assistive documentation software, not an autonomous medical system. Review and verify every generated note and safety alert before use.</div>}
-export function PageTitle({eyebrow,title,children}:{eyebrow:string;title:string;children?:ReactNode}){return <div className="page-title"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div>{children}</div>}
-export function Panel({title,label,children}:{title:string;label?:string;children:ReactNode}){return <section className="panel"><div className="panel-heading"><div><h3>{title}</h3>{label&&<span>{label}</span>}</div></div>{children}</section>}
-export function Button({children,primary=false,onClick,type='button',disabled=false}:{children:ReactNode;primary?:boolean;onClick?:()=>void;type?:'button'|'submit';disabled?:boolean}){return <button type={type} disabled={disabled} className={`btn ${primary?'primary':'secondary'}`} onClick={onClick}>{children}</button>}
-export function DemoBadge(){return <span className="status-pill"><i/> Demo Mode · Synthetic data</span>}
+
+const links = [
+  ['/', 'Dashboard', LayoutDashboard],
+  ['/patients', 'Patients', Users],
+  ['/consultations/new', 'Consultation Workspace', Stethoscope],
+  ['/history', 'History', History],
+  ['/labs', 'Lab Reports', Beaker],
+  ['/settings', 'Settings', Settings],
+] as const
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const { user, logout, mode } = useAuth()
+  const navigate = useNavigate()
+  const { activeConsultationId } = useConsultationStore()
+
+  return (
+    <div className="app">
+      <aside>
+        <Link to="/" className="brand">
+          <span className="brandmark">M+</span>
+          <span>
+            <b>MediScribe</b>
+            <small>Clinical documentation workspace</small>
+          </span>
+        </Link>
+        <div className="mode">
+          <span className={`dot ${mode === 'demo' ? 'demo' : ''}`} />
+          {mode === 'demo' ? 'DEMO MODE' : 'LIVE MODE'}
+          <small>{mode === 'demo' ? 'Synthetic data' : 'Backend session'}</small>
+        </div>
+        <nav>
+          {links.map(([to, label, Icon]) => (
+            <NavLink key={to} to={to} className={({ isActive }) => (isActive ? 'active' : '')}>
+              <Icon size={17} />
+              {label}
+            </NavLink>
+          ))}
+          {activeConsultationId && (
+            <NavLink
+              to={`/review/${activeConsultationId}`}
+              className={({ isActive }) => (isActive ? 'active' : '')}
+            >
+              <ClipboardCheck size={17} />
+              Review & Approve
+            </NavLink>
+          )}
+        </nav>
+        <div className="aside-bottom">
+          <Link to="/research">
+            <ClipboardCheck size={16} /> Advanced research
+          </Link>
+          <div className="clinician">
+            <span>{user?.name?.split(' ').map((x) => x[0]).join('').slice(0, 2) || '--'}</span>
+            <div>
+              {user?.name || 'Unauthenticated'}
+              <small>{user?.role || 'No active session'}</small>
+            </div>
+            <button
+              className="icon-button"
+              aria-label="Log out"
+              onClick={async () => {
+                await logout()
+                navigate('/login')
+              }}
+            >
+              <LogOut size={15} />
+            </button>
+          </div>
+        </div>
+      </aside>
+      <main>
+        <header>
+          <div>
+            <span className="eyebrow">MediScribe / Clinical workspace</span>
+            <h1>Documentation, with a second look.</h1>
+          </div>
+          <div className="header-status">
+            <span className={`status-pill ${mode === 'live' ? 'connected' : ''}`}>
+              <i /> {mode === 'demo' ? 'Demo Mode' : 'Live Session'}
+            </span>
+            <span className="avatar">{user?.name?.slice(0, 2).toUpperCase() || '--'}</span>
+          </div>
+        </header>
+        {children}
+      </main>
+    </div>
+  )
+}
+
+export function Notice() {
+  return (
+    <div className="notice">
+      <strong>Clinical safety notice</strong> MediScribe is assistive documentation software, not an autonomous medical system. Review and verify every generated note and safety alert before use.
+    </div>
+  )
+}
+
+export function PageTitle({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
+  return (
+    <div className="page-title">
+      <div>
+        <span className="eyebrow">{eyebrow}</span>
+        <h2>{title}</h2>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+export function Panel({ title, label, children }: { title: string; label?: string; children: ReactNode }) {
+  return (
+    <section className="panel">
+      <div className="panel-heading">
+        <div>
+          <h3>{title}</h3>
+          {label && <span>{label}</span>}
+        </div>
+      </div>
+      {children}
+    </section>
+  )
+}
+
+export function Button({
+  children,
+  primary = false,
+  onClick,
+  type = 'button',
+  disabled = false,
+}: {
+  children: ReactNode
+  primary?: boolean
+  onClick?: () => void
+  type?: 'button' | 'submit'
+  disabled?: boolean
+}) {
+  return (
+    <button type={type} disabled={disabled} className={`btn ${primary ? 'primary' : 'secondary'}`} onClick={onClick}>
+      {children}
+    </button>
+  )
+}
+
+export function DemoBadge() {
+  return (
+    <span className="status-pill">
+      <i /> Demo Mode · Synthetic data
+    </span>
+  )
+}

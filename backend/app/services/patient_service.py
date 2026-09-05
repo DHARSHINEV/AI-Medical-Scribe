@@ -1,8 +1,11 @@
+from typing import Any, Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.models.consultation import Consultation
 from app.models.patient import Patient
 from app.schemas.patient import PatientCreate, PatientUpdate
+from app.services import audit_service
 
 
 def get_patient(
@@ -30,6 +33,7 @@ def get_patients(
 def create_patient(
     db: Session,
     data: PatientCreate,
+    user_id: Optional[int] = None,
 ) -> Patient:
     patient = Patient(
         mrn=data.mrn,
@@ -44,6 +48,13 @@ def create_patient(
     db.add(patient)
     db.commit()
     db.refresh(patient)
+
+    audit_service.log_event(
+        db,
+        action="PATIENT_CREATED",
+        user_id=user_id,
+        details={"patient_id": patient.id, "mrn": patient.mrn},
+    )
 
     return patient
 
@@ -70,3 +81,15 @@ def delete_patient(
 ) -> None:
     db.delete(patient)
     db.commit()
+
+
+def get_patient_history(
+    db: Session,
+    patient_id: int,
+) -> list[Consultation]:
+    statement = (
+        select(Consultation)
+        .where(Consultation.patient_id == patient_id)
+        .order_by(Consultation.created_at.desc())
+    )
+    return list(db.scalars(statement).all())

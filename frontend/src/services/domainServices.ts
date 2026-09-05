@@ -1,14 +1,91 @@
-import { apiRequest, apiMultipart } from './api'
+import { api, apiMultipart } from './api'
 import type { Patient } from '../types/patient'
 import type { Consultation, TranscriptSegment } from '../types/consultation'
 import type { ClinicalEntity } from '../types/clinical'
 import type { SOAPNote } from '../types/soap'
-import type { SafetyAlert } from '../types/safety'
+import type { SafetyAlert, SafetySummary } from '../types/safety'
+import type { AuditLog } from '../types/audit'
 
-export const patientService = { getPatients: () => apiRequest<Patient[]>('/patients'), getPatient: (id:string) => apiRequest<Patient>(`/patients/${id}`), createPatient: (data: Partial<Patient>) => apiRequest<Patient>('/patients', {method:'POST', body:JSON.stringify(data)}) }
-export const consultationService = { createConsultation: (data: Partial<Consultation>) => apiRequest<Consultation>('/consultations', {method:'POST',body:JSON.stringify(data)}), getConsultation: (id:string) => apiRequest<Consultation>(`/consultations/${id}`), getPatientHistory: (id:string) => apiRequest<Consultation[]>(`/patients/${id}/history`), approveConsultation: (id:string) => apiRequest<Consultation>(`/consultations/${id}/approve`, {method:'POST'}) }
-export const transcriptionService = { uploadConsultationAudio: (id:string, blob:Blob) => { const form = new FormData(); form.append('audio', blob, 'consultation.webm'); return apiMultipart<{jobId:string}>(`/consultations/${id}/audio`, form) }, transcribeConsultation: (id:string) => apiRequest<TranscriptSegment[]>(`/consultations/${id}/transcribe`, {method:'POST'}), getTranscript: (id:string) => apiRequest<TranscriptSegment[]>(`/consultations/${id}/transcript`) }
-export const clinicalService = { extractClinicalEntities: (id:string) => apiRequest<ClinicalEntity[]>(`/consultations/${id}/clinical-entities`, {method:'POST'}), generateSOAPNote: (id:string) => apiRequest<SOAPNote>(`/consultations/${id}/soap`, {method:'POST'}), updateSOAPNote: (id:string, note:SOAPNote) => apiRequest<SOAPNote>(`/consultations/${id}/soap`, {method:'PUT',body:JSON.stringify(note)}) }
-export const safetyService = { validateConsultation: (id:string) => apiRequest<SafetyAlert[]>(`/consultations/${id}/validate`, {method:'POST'}), getSafetyAlerts: (id:string) => apiRequest<SafetyAlert[]>(`/consultations/${id}/safety-alerts`) }
-export const authService = { login: (email:string, password:string) => apiRequest<{token:string}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})}) }
-export const noteService = { generateSOAPNote: clinicalService.generateSOAPNote, updateSOAPNote: clinicalService.updateSOAPNote, approveConsultation: consultationService.approveConsultation }
+export const patientService = {
+  getPatients: () => api.get<Patient[]>('/api/patients'),
+  getPatient: (id: string | number) => api.get<Patient>(`/api/patients/${id}`),
+  createPatient: (data: Partial<Patient>) => api.post<Patient>('/api/patients', data),
+  updatePatient: (id: string | number, data: Partial<Patient>) => api.put<Patient>(`/api/patients/${id}`, data),
+  deletePatient: (id: string | number) => api.delete<void>(`/api/patients/${id}`),
+  getPatientHistory: (id: string | number) => api.get<Consultation[]>(`/api/patients/${id}/consultations`),
+}
+
+export const consultationService = {
+  createConsultation: (patientId: string | number, doctorId?: number) =>
+    api.post<Consultation>(`/api/patients/${patientId}/consultations`, { doctor_id: doctorId }),
+  getConsultation: (id: string | number) => api.get<Consultation>(`/api/consultations/${id}`),
+  getPatientConsultations: (patientId: string | number) =>
+    api.get<Consultation[]>(`/api/patients/${patientId}/consultations`),
+  approveConsultation: (id: string | number) =>
+    api.post<{ id: number; status: string; stage: string; approved: boolean; approved_at: string; approved_by?: number }>(
+      `/api/consultations/${id}/approve`,
+      {}
+    ),
+  getAuditLogs: (id: string | number) => api.get<AuditLog[]>(`/api/consultations/${id}/audit`),
+}
+
+export const transcriptionService = {
+  uploadConsultationAudio: (id: string | number, fileOrBlob: Blob | File) => {
+    const form = new FormData()
+    if (fileOrBlob instanceof File) {
+      form.append('audio', fileOrBlob, fileOrBlob.name)
+    } else {
+      form.append('audio', fileOrBlob, 'consultation.webm')
+    }
+    return apiMultipart<{
+      id: number
+      patient_id: number
+      patientId: string
+      status: string
+      stage: string
+      audio_path: string
+      jobId: string
+    }>(`/api/consultations/${id}/audio`, form)
+  },
+  transcribeConsultation: (id: string | number) =>
+    api.post<TranscriptSegment[]>(`/api/consultations/${id}/transcribe`, {}),
+  getTranscript: (id: string | number) => api.get<TranscriptSegment[]>(`/api/consultations/${id}/transcript`),
+}
+
+export const clinicalService = {
+  extractClinicalEntities: (id: string | number) =>
+    api.post<ClinicalEntity[]>(`/api/consultations/${id}/extract`, {}),
+  getClinicalEntities: (id: string | number) =>
+    api.get<ClinicalEntity[]>(`/api/consultations/${id}/clinical_entities`),
+  generateSOAPNote: (id: string | number) =>
+    api.post<SOAPNote>(`/api/consultations/${id}/generate-note`, {}),
+  getSOAPNote: (id: string | number) =>
+    api.get<SOAPNote>(`/api/consultations/${id}/note`),
+  updateSOAPNote: (id: string | number, note: Partial<SOAPNote>) =>
+    api.put<SOAPNote>(`/api/consultations/${id}/note`, {
+      subjective: note.subjective,
+      objective: note.objective,
+      assessment: note.assessment,
+      plan: note.plan,
+    }),
+}
+
+export const safetyService = {
+  getSafetySummary: (id: string | number) =>
+    api.get<SafetySummary>(`/api/consultations/${id}/safety`),
+  validateConsultation: (id: string | number) =>
+    api.post<SafetyAlert[]>(`/api/consultations/${id}/validate`, {}),
+  getSafetyAlerts: (id: string | number) =>
+    api.get<SafetyAlert[]>(`/api/consultations/${id}/alerts`),
+  resolveAlert: (consultationId: string | number, alertId: string | number, resolved = true) =>
+    api.post<SafetyAlert>(`/api/consultations/${consultationId}/safety/${alertId}/resolve`, { resolved }),
+  unresolveAlert: (consultationId: string | number, alertId: string | number) =>
+    api.post<SafetyAlert>(`/api/consultations/${consultationId}/safety/${alertId}/unresolve`, {}),
+}
+
+export const noteService = {
+  getSOAPNote: clinicalService.getSOAPNote,
+  generateSOAPNote: clinicalService.generateSOAPNote,
+  updateSOAPNote: clinicalService.updateSOAPNote,
+  approveConsultation: consultationService.approveConsultation,
+}

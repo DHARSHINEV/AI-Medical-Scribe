@@ -42,3 +42,34 @@ Thumbs.db
 # Temporary
 tmp/
 temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.env
+
+# Database / runtime data
+*.db
+*.sqlite
+*.sqlite3
+backend/uploads/
+
+# Node
+node_modules/
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Local artifacts
+*.zip
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -32,3 +32,5 @@ class User(Base):
         default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
+
+    audit_logs = relationship("AuditLog", back_populates="user")

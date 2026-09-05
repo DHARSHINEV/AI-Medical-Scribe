@@ -1,14 +1,16 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db
+from app.core.dependencies import get_current_user, get_db
+from app.models.user import User
+from app.schemas.consultation import ConsultationResponse
 from app.schemas.patient import (
     PatientCreate,
     PatientResponse,
     PatientUpdate,
 )
-from app.services import patient_service
-
+from app.services import consultation_service, patient_service
 
 router = APIRouter(
     prefix="/api/patients",
@@ -34,6 +36,7 @@ def list_patients(
 def create_patient(
     patient: PatientCreate,
     db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user),
 ):
     existing = patient_service.get_patient_by_mrn(
         db,
@@ -49,6 +52,7 @@ def create_patient(
     return patient_service.create_patient(
         db,
         patient,
+        user_id=current_user.id if current_user else None,
     )
 
 
@@ -124,3 +128,24 @@ def delete_patient(
         db,
         patient,
     )
+
+
+@router.get(
+    "/{patient_id}/history",
+    response_model=list[ConsultationResponse],
+)
+def get_patient_history(
+    patient_id: int,
+    db: Session = Depends(get_db),
+):
+    patient = patient_service.get_patient(
+        db,
+        patient_id,
+    )
+    if not patient:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Patient not found.",
+        )
+
+    return patient_service.get_patient_history(db, patient_id)
